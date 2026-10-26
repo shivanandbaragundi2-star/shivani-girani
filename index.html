@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ಶಿವಾನಿ ಹಿಟ್ಟಿನ ಗಿರಣಿ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f1f8e9',500:'#4caf50',700:'#2e7d32',800:'#1b5e20'}}}}}</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>body{font-family:'Noto Sans Kannada',sans-serif;background:#f4f7f4}.no-scrollbar::-webkit-scrollbar{display:none}.sticky-nav{position:sticky;top:0;z-index:40;backdrop-filter:blur(8px)}</style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col pb-16">
+<header class="bg-green-800 text-white shadow-lg border-b-4 border-green-500">
+<div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-3">
+<div class="flex items-center gap-3"><div class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-2xl">🌾</div><div><h1 class="text-2xl font-extrabold text-amber-300">ಶಿವಾನಿ ಹಿಟ್ಟಿನ ಗಿರಣಿ</h1><p class="text-xs text-green-100">ದೈನಂದಿನ ಗ್ರಾಹಕರ ನಿರ್ವಹಣೆ</p></div></div>
+<div class="flex items-center gap-2 bg-black/20 p-2 rounded-xl w-full md:w-auto justify-between"><span class="text-sm text-amber-200">ದಿನಾಂಕ:</span><input type="date" id="selectedDate" onchange="loadDateData()" class="bg-white text-gray-900 text-sm font-bold rounded-lg px-3 py-1.5 outline-none"></div>
+</div></header>
+
+<div class="sticky-nav bg-white shadow-md border-b"><div class="max-w-7xl mx-auto px-3 py-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+<div class="bg-green-50 p-2.5 rounded-xl border"><div class="text-xs font-semibold">ಒಟ್ಟು ಆದಾಯ</div><div class="text-xl font-black text-green-700" id="statTotalRevenue">₹0</div></div>
+<div class="bg-emerald-50 p-2.5 rounded-xl border"><div class="text-xs font-semibold">ಒಟ್ಟು ನಮೂದುಗಳು</div><div class="text-xl font-bold text-emerald-700" id="statTotalEntries">0</div></div>
+<div class="bg-amber-50 p-2.5 rounded-xl border"><div class="text-xs font-semibold">ವಿಶಿಷ್ಟ ಗ್ರಾಹಕರು</div><div class="text-xl font-bold text-amber-700" id="statUniqueCustomers">0</div></div>
+<div class="bg-blue-50 p-2.5 rounded-xl border"><div class="text-xs font-semibold">ಈ ವಿಭಾಗದ ಮೊತ್ತ</div><div class="text-xl font-bold text-blue-700" id="statActiveCategoryTotal">₹0</div></div>
+</div></div>
+
+<main class="max-w-7xl mx-auto px-3 my-4 w-full">
+<details class="bg-white rounded-xl shadow-sm border mb-4"><summary class="px-4 py-3 bg-green-50 text-green-800 font-bold text-sm flex justify-between cursor-pointer"><span>ವಿಭಾಗವಾರು ಒಟ್ಟು ವಿವರ</span><span class="text-xs bg-green-800 text-white px-2 py-0.5 rounded-full">ನೋಡಿ</span></summary><div class="p-4 grid grid-cols-2 lg:grid-cols-6 gap-3" id="categorySummaryGrid"></div></details>
+<div class="flex overflow-x-auto no-scrollbar space-x-2 pb-2" id="categoryTabs"></div>
+<div class="bg-white p-3 rounded-xl shadow-sm border mb-4 flex flex-col md:flex-row gap-3 justify-between items-center">
+<div class="relative w-full md:w-80"><i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-400"></i><input type="text" id="searchInput" oninput="filterRows()" placeholder="ಹೆಸರಿನಿಂದ ಹುಡುಕಿ..." class="pl-10 pr-4 py-2 w-full border rounded-lg text-sm outline-none"></div>
+<div class="flex gap-2"><button onclick="exportToCSV()" class="bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg">CSV</button><button onclick="exportJSON()" class="bg-blue-700 text-white text-xs px-3 py-2 rounded-lg">Backup</button><button onclick="triggerJSONImport()" class="bg-purple-700 text-white text-xs px-3 py-2 rounded-lg">Restore</button><input type="file" id="importJsonInput" class="hidden" onchange="importJSON(event)"><button onclick="resetDayData()" class="bg-red-600 text-white text-xs px-3 py-2 rounded-lg">Reset</button></div>
+</div>
+<div class="bg-white rounded-xl shadow-md border overflow-hidden"><div class="bg-green-700 text-white px-4 py-3 flex justify-between"><h2 class="font-bold" id="currentCategoryTitle">೧. ಜೋಳ</h2><span class="text-xs bg-black/30 px-2 py-1 rounded-full">100 ಸಾಲುಗಳು</span></div><div class="overflow-x-auto max-h-[600px] overflow-y-auto"><table class="w-full text-left border-collapse"><thead class="bg-gray-100 text-xs sticky top-0"><tr><th class="py-3 px-3 text-center w-16 border-b">ಕ್ರ.ಸಂ.</th><th class="py-3 px-4 border-b">ಗ್ರಾಹಕರ ಹೆಸರು</th><th class="py-3 px-4 border-b w-36">ಮೊತ್ತ ₹</th><th class="py-3 px-3 text-center border-b w-28">ಸ್ಥಿತಿ</th></tr></thead><tbody id="rowsTableBody" class="divide-y text-sm"></tbody></table></div><div class="p-3 bg-gray-50 text-xs text-center text-gray-500">* Auto-saved to Browser</div></div>
+</main>
+<div id="toast" class="fixed bottom-16 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-xl text-sm opacity-0 pointer-events-none transition-all z-50"><span id="toastMsg">ಉಳಿಸಲಾಗಿದೆ!</span></div>
+
+<script>
+const CATEGORIES=[{id:'jowar',name:'೧. ಜೋಳ (Jowar)'},{id:'rice',name:'೨. ಅಕ್ಕಿ (Rice)'},{id:'wheat',name:'೩. ಗೋಧಿ (Wheat)'},{id:'ganjala1',name:'೪. ಗಂಜಲ ೧'},{id:'rava',name:'೫. ರವಾ / ಒಡೆದದ್ದು'},{id:'ganjala2',name:'೬. ಗಂಜಲ ೨'}];
+let activeCategoryId=CATEGORIES[0].id,activeDate=new Date().toISOString().split('T')[0],appData={};const STORAGE_KEY='shivani_hittina_girani_v1';
+window.onload=()=>{document.getElementById('selectedDate').value=activeDate;renderCategoryTabs();loadDateData();};
+function createEmpty100Rows(){return Array.from({length:100},()=>({name:'',amount:''}));}
+function createEmptyDayData(){const o={};CATEGORIES.forEach(c=>o[c.id]=createEmpty100Rows());return o;}
+function saveToLocalStorage(){localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));}
+function loadDateData(){const d=document.getElementById('selectedDate').value;if(d)activeDate=d;const raw=localStorage.getItem(STORAGE_KEY);appData=raw?JSON.parse(raw):{};if(!appData[activeDate]){appData[activeDate]=createEmptyDayData();saveToLocalStorage();}renderDashboard();renderRowsTable();}
+function renderCategoryTabs(){const c=document.getElementById('categoryTabs');c.innerHTML='';CATEGORIES.forEach(cat=>{const b=document.createElement('button');b.onclick=()=>switchCategory(cat.id);b.className=`flex-shrink-0 px-4 py-2.5 rounded-xl font-bold text-xs shadow-sm ${cat.id===activeCategoryId?'bg-green-800 text-white ring-2':'bg-white border'}`;b.innerText=cat.name;c.appendChild(b);});}
+function switchCategory(id){activeCategoryId=id;document.getElementById('currentCategoryTitle').innerText=CATEGORIES.find(c=>c.id===id).name;document.getElementById('searchInput').value='';renderCategoryTabs();renderRowsTable();updateActiveCategoryTotalStat();}
+function handleNameChange(i,v){appData[activeDate][activeCategoryId][i].name=v;saveToLocalStorage();renderDashboard();}
+function handleAmountChange(i,v){appData[activeDate][activeCategoryId][i].amount=v;saveToLocalStorage();renderDashboard();updateActiveCategoryTotalStat();}
+function renderRowsTable(){const tbody=document.getElementById('rowsTableBody');tbody.innerHTML='';const rows=appData[activeDate][activeCategoryId]||[];const filter=document.getElementById('searchInput').value.toLowerCase();rows.forEach((row,idx)=>{if(filter&&!row.name.toLowerCase().includes(filter))return;const tr=document.createElement('tr');tr.className=row.name||row.amount?'bg-amber-50/40':'';tr.innerHTML=`<td class="py-2 px-3 text-center border-b">${idx+1}</td><td class="py-2 px-2 border-b"><input type="text" value="${row.name.replace(/"/g,'&quot;')}" oninput="handleNameChange(${idx},this.value)" placeholder="ಹೆಸರು" class="w-full px-2 py-1.5 border rounded-lg text-sm outline-none"></td><td class="py-2 px-2 border-b"><input type="number" value="${row.amount}" oninput="handleAmountChange(${idx},this.value)" placeholder="₹" class="w-full px-2 py-1.5 border rounded-lg text-sm outline-none"></td><td class="py-2 px-3 text-center border-b">${row.name||row.amount?'<span class="text-[10px] bg-green-600 text-white px-2 py-1 rounded-full">Saved</span>':'-'}</td>`;tbody.appendChild(tr);});}
+function filterRows(){renderRowsTable();}
+function renderDashboard(){let totalRev=0,totalEntries=0;const customers=new Set();const dayData=appData[activeDate];CATEGORIES.forEach(cat=>{(dayData[cat.id]||[]).forEach(r=>{const amt=parseFloat(r.amount)||0;if(amt>0||r.name){totalRev+=amt;if(r.name||amt>0)totalEntries++;if(r.name)customers.add(r.name.trim().toLowerCase());}});});document.getElementById('statTotalRevenue').innerText='₹'+totalRev;document.getElementById('statTotalEntries').innerText=totalEntries;document.getElementById('statUniqueCustomers').innerText=customers.size;updateActiveCategoryTotalStat();renderCategorySummary();}
+function updateActiveCategoryTotalStat(){let sum=0;(appData[activeDate]?.[activeCategoryId]||[]).forEach(r=>sum+=parseFloat(r.amount)||0);document.getElementById('statActiveCategoryTotal').innerText='₹'+sum;}
+function renderCategorySummary(){const grid=document.getElementById('categorySummaryGrid');grid.innerHTML='';CATEGORIES.forEach(cat=>{let sum=0,count=0;(appData[activeDate]?.[cat.id]||[]).forEach(r=>{const a=parseFloat(r.amount)||0;if(a>0||r.name){sum+=a;count++;}});const div=document.createElement('div');div.className='bg-gray-50 p-3 rounded-lg border text-center';div.innerHTML=`<div class="text-xs font-bold">${cat.name}</div><div class="text-lg font-black text-green-700">₹${sum}</div><div class="text-[11px] text-gray-500">${count} ನಮೂದು</div>`;grid.appendChild(div);});}
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').innerText=msg;t.classList.remove('opacity-0');t.classList.add('opacity-100');setTimeout(()=>{t.classList.add('opacity-0');},2500);}
+function exportToCSV(){let csv='Date,Category,SlNo,CustomerName,Amount\n';CATEGORIES.forEach(cat=>{appData[activeDate][cat.id].forEach((r,i)=>{if(r.name||r.amount)csv+=`${activeDate},"${cat.name}",${i+1},"${r.name}",${r.amount}\n`;});});const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`shivani-${activeDate}.csv`;a.click();showToast('CSV Download ಆಯಿತು!');}
+function exportJSON(){const blob=new Blob([JSON.stringify(appData,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`backup-${activeDate}.json`;a.click();showToast('Backup ಆಯಿತು!');}
+function triggerJSONImport(){document.getElementById('importJsonInput').click();}
+function importJSON(e){const file=e.target.files[0];const reader=new FileReader();reader.onload=(ev)=>{appData={...appData,...JSON.parse(ev.target.result)};saveToLocalStorage();loadDateData();showToast('Restore ಆಯಿತು!');};reader.readAsText(file);}
+function resetDayData(){if(!confirm('ಈ ದಿನದ ಡೇಟಾ Delete ಮಾಡಬೇಕಾ?'))return;appData[activeDate]=createEmptyDayData();saveToLocalStorage();loadDateData();showToast('Reset ಆಯಿತು!');}
+</script>
+</body>
+</html>
